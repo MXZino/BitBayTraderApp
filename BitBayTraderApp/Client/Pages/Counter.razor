@@ -1,0 +1,47 @@
+﻿@page "/counter"
+@inject NavigationManager NavigationManager
+
+@if (status != null)
+{
+    <div>@status.Status</div>
+    <div>@status.Ticker.Market.Code</div>
+    <div>@status.Ticker.Market.First.Currency</div>
+    <div>@status.Ticker.Market.First.MinOffer</div>
+    <div>@status.Ticker.Market.First.Scale</div>
+    <br />
+    <div>@status.Ticker.Market.Second.Currency</div>
+    <div>@status.Ticker.Market.Second.MinOffer</div>
+    <div>@status.Ticker.Market.Second.Scale</div>
+    <br />
+    <div>@status.Ticker.Time</div>
+    <div>@status.Ticker.HighestBid</div>
+    <div>@status.Ticker.LowestAsk</div>
+    <div>@status.Ticker.Rate</div>
+    <div>@status.Ticker.PreviousRate</div>
+}
+
+@if (hubConnection != null)
+{
+    <div>@hubConnection.State.ToString()</div>
+}
+
+@code {
+    private CurrentStatus status;
+    private HubConnection hubConnection;
+
+    protected override async Task OnInitializedAsync()
+    {
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl(NavigationManager.ToAbsoluteUri("/tickerstatus"))
+            .Build();
+
+        hubConnection.On<string, CurrentStatus>("ReceiveStatus", (marketCode, status) =>
+        {
+            Console.WriteLine("Dostałem info");
+            this.status = status;
+            StateHasChanged();
+        });
+
+        await hubConnection.StartAsync();
+    }
+}
