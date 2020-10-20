@@ -1,0 +1,113 @@
+﻿@inject NavigationManager NavigationManager
+
+@if (currentTicker != null)
+{
+    <table class="table table-striped">
+        <thead>
+            <tr class="d-flex">
+                <th class="col-2">Nazwa</th>
+                <th class="col-2">Wartość</th>
+                <th class="col-8">Opis</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            <tr class="d-flex">
+                <td class="col-2">Status</td>
+                <td class="col-2">@currentTicker.Status</td>
+                <td class="col-8">Status zapytania</td>
+            </tr>
+
+            <tr class="d-flex">
+                <td class="col-2">Kod</td>
+                <td class="col-2">@currentTicker.Ticker.Market.Code</td>
+                <td class="col-8">Kod rynku dla którego zostało wykonane zapytanie</td>
+            </tr>
+
+            <tr class="d-flex">
+                <td class="col-2">MinOffer @currentTicker.Ticker.Market.First.Currency</td>
+                <td class="col-2">@currentTicker.Ticker.Market.First.MinOffer.ToString("0.000000")</td>
+                <td class="col-8">Minimalna wartość @currentTicker.Ticker.Market.First.Currency jaką można wystawić.</td>
+            </tr>
+
+            <tr class="d-flex">
+                <td class="col-2">Scale @currentTicker.Ticker.Market.First.Currency</td>
+                <td class="col-2">@currentTicker.Ticker.Market.First.Scale</td>
+                <td class="col-8">Ilość miejsc po przecinku obsługiwana przez @currentTicker.Ticker.Market.First.Currency</td>
+            </tr>
+
+            <tr class="d-flex">
+                <td class="col-2">MinOffer @currentTicker.Ticker.Market.Second.Currency</td>
+                <td class="col-2">@currentTicker.Ticker.Market.Second.MinOffer</td>
+                <td class="col-8">Minimalna wartość @currentTicker.Ticker.Market.Second.Currency jaką można wystawić.</td>
+            </tr>
+
+            <tr class="d-flex">
+                <td class="col-2">Scale @currentTicker.Ticker.Market.Second.Currency</td>
+                <td class="col-2">@currentTicker.Ticker.Market.Second.Scale</td>
+                <td class="col-8">Ilość miejsc po przecinku obsługiwana przez @currentTicker.Ticker.Market.Second.Currency</td>
+            </tr>
+
+            <tr class="d-flex">
+                <td class="col-2">Czas informacji</td>
+                <td class="col-2">@currentTicker.Ticker.Time</td>
+                <td class="col-8">Godzina UTC otrzymania informacji</td>
+            </tr>
+
+            <tr class="d-flex">
+                <td class="font-weight-bold col-2">HighestBid</td>
+                <td class="font-weight-bold col-2">@currentTicker.Ticker.HighestBid</td>
+                <td class="col-8">Aktualnie najlepszy kurs dla ofert kupna.</td>
+            </tr>
+
+            <tr class="d-flex">
+                <td class="font-weight-bold col-2">LowestAsk</td>
+                <td class="font-weight-bold col-2">@currentTicker.Ticker.LowestAsk</td>
+                <td class="col-8">Aktualnie najlepszy kurs dla ofert sprzedaży.</td>
+            </tr>
+
+            <tr class="d-flex">
+                <td class="col-2">Rate</td>
+                <td class="col-2">@currentTicker.Ticker.Rate</td>
+                <td class="col-8">Kurs ostatniej transakcji.</td>
+            </tr>
+
+            <tr class="d-flex">
+                <td class="col-2">PreviousRate</td>
+                <td class="col-2">@currentTicker.Ticker.PreviousRate</td>
+                <td class="col-8">Kurs przedostatniej transakcji.</td>
+            </tr>
+        </tbody>
+    </table>
+}
+
+@code {
+    [Parameter]
+    public string MarketCode { get; set; }
+
+    private CurrentStatus currentTicker { get; set; }
+    private HubConnection hubConnection;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await this.ConnectToHub();
+    }
+
+    private async Task ConnectToHub()
+    {
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl(NavigationManager.ToAbsoluteUri("/publicRESTHub"))
+            .Build();
+
+        hubConnection.On<string, CurrentStatus>("ReceiveTickerStatus", (marketCode, status) =>
+        {
+            if (marketCode == MarketCode)
+            {
+                this.currentTicker = status;
+            }
+            StateHasChanged();
+        });
+
+        await hubConnection.StartAsync();
+    }
+}

@@ -28,6 +28,7 @@ namespace BitBayTraderApp.Server
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+
             services.AddSignalR();
             services.AddScoped<HttpClient>();
             services.AddScoped(typeof(IPublicRESTService), typeof(PublicRESTService));
@@ -38,6 +39,9 @@ namespace BitBayTraderApp.Server
                     new[] { "application/octet-stream" });
             });
             services.AddRazorPages();
+
+            services.AddHostedService<DownloadDataHostedService>();
+            services.AddScoped<DownloadDataService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -62,12 +66,11 @@ namespace BitBayTraderApp.Server
             app.UseStaticFiles();
 
             app.UseRouting();
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapRazorPages();
                 endpoints.MapControllers();
-                endpoints.MapHub<TickerStatusHub>("/tickerstatus");
+                endpoints.MapHub<PublicRESTHub>("/publicRESTHub");
                 endpoints.MapFallbackToFile("index.html");
             });
         }

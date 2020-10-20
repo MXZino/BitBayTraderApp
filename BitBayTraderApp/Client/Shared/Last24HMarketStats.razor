@@ -1,0 +1,77 @@
+﻿@inject NavigationManager NavigationManager
+
+@if (marketStats != null)
+{
+    <table class="table table-striped">
+        <thead>
+            <tr class="d-flex">
+                <th class="col-2">Nazwa</th>
+                <th class="col-2">Wartość</th>
+                <th class="col-8">Opis</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            <tr class="d-flex">
+                <td class="col-2">Status</td>
+                <td class="col-2">@marketStats.Status</td>
+                <td class="col-8">Status zapytania.</td>
+            </tr>
+
+            <tr class="d-flex">
+                <td class="col-2">HighestRate</td>
+                <td class="col-2">@marketStats.Stats.HighestRate</td>
+                <td class="col-8">Najwyższy kurs z ostatnich 24 godzin.</td>
+            </tr>
+
+            <tr class="d-flex">
+                <td class="col-2">LowestRate</td>
+                <td class="col-2">@marketStats.Stats.LowestRate</td>
+                <td class="col-8">Najniższy kurs z ostatnich 24 godzin.</td>
+            </tr>
+
+            <tr class="d-flex">
+                <td class="col-2">Last24HVolument</td>
+                <td class="col-2">@marketStats.Stats.Last24HVolumen</td>
+                <td class="col-8">Volumen z ostatnich 24 godzin.</td>
+            </tr>
+
+            <tr class="d-flex">
+                <td class="col-2">Last24HRate</td>
+                <td class="col-2">@marketStats.Stats.Last24HAverageRate</td>
+                <td class="col-8">Średni kurs z ostatnich 24 godzin.</td>
+            </tr>
+
+        </tbody>
+    </table>
+}
+@code {
+    [Parameter]
+    public string MarketCode { get; set; }
+
+    private MarketStats marketStats { get; set; }
+    private HubConnection hubConnection;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await this.ConnectToHub();
+    }
+
+    private async Task ConnectToHub()
+    {
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl(NavigationManager.ToAbsoluteUri("/publicRESTHub"))
+            .Build();
+
+        hubConnection.On<string, MarketStats>("ReceiveLast24HStats", (marketCode, stats) =>
+        {
+            if (marketCode == MarketCode)
+            {
+                this.marketStats = stats;
+            }
+            StateHasChanged();
+        });
+
+        await hubConnection.StartAsync();
+    }
+}

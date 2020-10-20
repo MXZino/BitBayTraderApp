@@ -1,0 +1,9 @@
+﻿@page "/BTC-PLN"
+@page "/"
+
+<TickerStatus MarketCode="@marketCode"/>
+<Last24HMarketStats MarketCode="@marketCode" />
+
+@code {
+    private string marketCode = "BTC-PLN";
+}

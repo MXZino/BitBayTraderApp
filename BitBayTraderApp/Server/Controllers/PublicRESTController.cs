@@ -14,24 +14,29 @@ namespace BitBayTraderApp.Server.Controllers
     [ApiController]
     public class PublicRESTController : ControllerBase
     {
-        private readonly IHubContext<TickerStatusHub> tickerStatusHubContext;
+        private readonly IHubContext<PublicRESTHub> publicRESTHubContext;
         private readonly IPublicRESTService publicRestService;
 
-        public PublicRESTController(IPublicRESTService publicRestService , IHubContext<TickerStatusHub> tickerStatusHubContext)
+        public PublicRESTController(IPublicRESTService publicRestService, IHubContext<PublicRESTHub> publicRESTHubContext)
         {
             this.publicRestService = publicRestService;
-            this.tickerStatusHubContext = tickerStatusHubContext;
+            this.publicRESTHubContext = publicRESTHubContext;
         }
 
         [HttpGet("ticker/{marketCode}")]
-        public async Task <IActionResult> GetTicker (string marketCode)
+        public async Task<IActionResult> GetTicker(string marketCode)
         {
-            while (true)
-            {
-                var ticker = await publicRestService.GetTicker(marketCode);
-                await tickerStatusHubContext.Clients.All.SendAsync("ReceiveStatus", marketCode, ticker);
-            }
-            return Ok();
+            var ticker = await publicRestService.GetTicker(marketCode);
+            await publicRESTHubContext.Clients.All.SendAsync("ReceiveTickerStatus", marketCode, ticker);
+            return Ok(ticker);
+        }
+
+        [HttpGet("stats24h/{marketCode}")]
+        public async Task<IActionResult> GetLast24hStats(string marketCode)
+        {
+            var stats = await publicRestService.GetMarketStats(marketCode);
+            await publicRESTHubContext.Clients.All.SendAsync("ReceiveLast24HStats", marketCode, stats);
+            return Ok(stats);
         }
     }
 }

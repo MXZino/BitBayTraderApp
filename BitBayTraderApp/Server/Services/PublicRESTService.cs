@@ -36,5 +36,26 @@ namespace BitBayTraderApp.Server.Services
             }
             return default;
         }
+
+        public async Task<MarketStats> GetMarketStats(string marketCode)
+        {
+            var response = await httpClient.GetAsync($"https://api.bitbay.net/rest/trading/stats/{marketCode}");
+            if (response.IsSuccessStatusCode)
+            {
+                var json = await response.Content.ReadAsStringAsync();
+                try
+                {
+                    var opts = SerializationOption.Add(new Serialization[] { Serialization.DoubleToString });
+                    opts.Converters.Add(new DoubleToStringConverter());
+                    opts.Converters.Add(new TimeStampToStringConverter());
+                    return JsonSerializer.Deserialize<MarketStats>(json, opts);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                }
+            }
+            return default;
+        }
     }
 }

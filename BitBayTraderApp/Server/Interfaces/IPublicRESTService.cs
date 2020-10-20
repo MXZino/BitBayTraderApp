@@ -9,5 +9,6 @@ namespace BitBayTraderApp.Server.Interfaces
     public interface IPublicRESTService
     {
         Task<CurrentStatus> GetTicker(string marketCode);
+        Task<MarketStats> GetMarketStats(string marketCode);
     }
 }

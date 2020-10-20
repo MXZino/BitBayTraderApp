@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30509.190
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitBayTraderApp.Server", "BitBayTraderApp\Server\BitBayTraderApp.Server.csproj", "{F38C54A6-55DE-4C0E-A166-ECF3F00BB241}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BitBayTraderApp.Server", "BitBayTraderApp\Server\BitBayTraderApp.Server.csproj", "{F38C54A6-55DE-4C0E-A166-ECF3F00BB241}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitBayTraderApp.Client", "BitBayTraderApp\Client\BitBayTraderApp.Client.csproj", "{50E1490D-9264-4CB0-AA99-0960D2DE3C46}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BitBayTraderApp.Client", "BitBayTraderApp\Client\BitBayTraderApp.Client.csproj", "{50E1490D-9264-4CB0-AA99-0960D2DE3C46}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitBayTraderApp.Shared", "BitBayTraderApp\Shared\BitBayTraderApp.Shared.csproj", "{8FB7090D-9D3C-4AD5-9DDF-983884275A30}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BitBayTraderApp.Shared", "BitBayTraderApp\Shared\BitBayTraderApp.Shared.csproj", "{8FB7090D-9D3C-4AD5-9DDF-983884275A30}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

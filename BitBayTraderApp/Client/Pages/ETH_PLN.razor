@@ -1,0 +1,9 @@
+﻿@page "/ETH-PLN"
+
+<TickerStatus MarketCode="@marketCode" />
+<Last24HMarketStats MarketCode="@marketCode" />
+
+@code {
+    private string marketCode = "ETH-PLN";
+}
+
