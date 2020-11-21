@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace BitBayTraderApp.Server.Interfaces
 {
-    public interface IPublicRESTService
+    public interface IPublicAPIService
     {
-        Task<CurrentStatus> GetTicker(string marketCode);
-        Task<MarketStats> GetMarketStats(string marketCode);
+        Task<T> GetItems<T>(string marketCode);
     }
 }

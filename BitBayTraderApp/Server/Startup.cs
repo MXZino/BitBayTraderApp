@@ -31,7 +31,7 @@ namespace BitBayTraderApp.Server
 
             services.AddSignalR();
             services.AddScoped<HttpClient>();
-            services.AddScoped(typeof(IPublicRESTService), typeof(PublicRESTService));
+            services.AddScoped(typeof(IPublicAPIService), typeof(PublicAPIService));
             services.AddControllersWithViews();
             services.AddResponseCompression(opts =>
             {
@@ -42,6 +42,7 @@ namespace BitBayTraderApp.Server
 
             services.AddHostedService<DownloadDataHostedService>();
             services.AddScoped<DownloadDataService>();
+            services.AddScoped<AlgorithmTesting>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -70,7 +71,7 @@ namespace BitBayTraderApp.Server
             {
                 endpoints.MapRazorPages();
                 endpoints.MapControllers();
-                endpoints.MapHub<PublicRESTHub>("/publicRESTHub");
+                endpoints.MapHub<PublicAPIHub>("/publicAPI");
                 endpoints.MapFallbackToFile("index.html");
             });
         }

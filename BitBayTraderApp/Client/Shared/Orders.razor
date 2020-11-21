@@ -1,0 +1,35 @@
+﻿<table class="table table-striped">
+    <thead>
+        <tr class="d-flex bg-white" style="position: sticky; top: 0; z-index:1;">
+            <th class="col-2">Kurs pozycji</th>
+            <th class="col-3">Obecna ilość kryptowaluty</th>
+            <th class="col-3">Początkowa ilość kryptowaluty</th>
+            <th class="col-3">Ilość kryptowaluty przed ostatnią zmianą</th>
+            <th class="col-1">Ilość ofert</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        @foreach (var order in OrderList)
+        {
+            <tr class="d-flex">
+                <td class="col-2">@order.Rate</td>
+                <td class="col-3">@order.CurrentAmount</td>
+                <td class="col-3">@order.StartingAmount</td>
+                <td class="col-3">@order.PreviousAmount</td>
+                <td class="col-1">@order.Offers</td>
+            </tr>
+        }
+
+    </tbody>
+</table>
+
+@code {
+    [Parameter]
+    public List<Order> OrderList { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        OrderList = OrderList.Take(25).ToList();
+    }
+}

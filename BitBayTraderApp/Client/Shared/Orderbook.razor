@@ -1,6 +1,6 @@
 ﻿@inject NavigationManager NavigationManager
 
-@if (marketStats != null)
+@if (orderbook != null)
 {
     <table class="table table-striped">
         <thead>
@@ -14,42 +14,42 @@
 
             <tr class="d-flex">
                 <td class="col-2">Status</td>
-                <td class="col-2">@marketStats.Status</td>
+                <td class="col-2">@orderbook.Status</td>
                 <td class="col-8">Status zapytania.</td>
             </tr>
 
             <tr class="d-flex">
-                <td class="col-2">HighestRate</td>
-                <td class="col-2">@marketStats.Stats.HighestRate</td>
-                <td class="col-8">Najwyższy kurs z ostatnich 24 godzin.</td>
+                <td class="col-2">TimeStamp</td>
+                <td class="col-2">@orderbook.Timestamp</td>
+                <td class="col-8">Znacznik czasu.</td>
             </tr>
 
             <tr class="d-flex">
-                <td class="col-2">LowestRate</td>
-                <td class="col-2">@marketStats.Stats.LowestRate</td>
-                <td class="col-8">Najniższy kurs z ostatnich 24 godzin.</td>
-            </tr>
-
-            <tr class="d-flex">
-                <td class="col-2">Last24HVolument</td>
-                <td class="col-2">@marketStats.Stats.Last24HVolumen</td>
-                <td class="col-8">Volumen z ostatnich 24 godzin.</td>
-            </tr>
-
-            <tr class="d-flex">
-                <td class="col-2">Last24HRate</td>
-                <td class="col-2">@marketStats.Stats.Last24HAverageRate</td>
-                <td class="col-8">Średni kurs z ostatnich 24 godzin.</td>
+                <td class="col-2">Sekwencja</td>
+                <td class="col-2">@orderbook.SeqNo</td>
+                <td class="col-8">Numer sekwencji.</td>
             </tr>
 
         </tbody>
     </table>
+
+    <div class="row mx-0">
+        <div class="col-md-6">
+            <h3 class="text-center">Oferty kupna</h3>
+            <Orders OrderList="orderbook.Buy"/>
+        </div>
+
+        <div class="col-md-6">
+            <h3 class="text-center">Oferty sprzedaży</h3>
+            <Orders OrderList="orderbook.Sell" />
+        </div>
+    </div>
 }
 @code {
     [Parameter]
     public string MarketCode { get; set; }
 
-    private MarketStats marketStats { get; set; }
+    private BitBayTraderApp.Shared.Models.DTO.PublicRest.Orderbook orderbook { get; set; }
     private HubConnection hubConnection;
 
     protected override async Task OnParametersSetAsync()
@@ -63,11 +63,11 @@
             .WithUrl(NavigationManager.ToAbsoluteUri("/publicAPI"))
             .Build();
 
-        hubConnection.On<string, MarketStats>("ReceiveLast24HStats", (marketCode, stats) =>
+        hubConnection.On<string, BitBayTraderApp.Shared.Models.DTO.PublicRest.Orderbook>("ReceiveOrderbook", (marketCode, orderbook) =>
         {
             if (marketCode == MarketCode)
             {
-                this.marketStats = stats;
+                this.orderbook = orderbook;
             }
             StateHasChanged();
         });

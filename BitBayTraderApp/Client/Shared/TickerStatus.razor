@@ -96,7 +96,7 @@
     private async Task ConnectToHub()
     {
         hubConnection = new HubConnectionBuilder()
-            .WithUrl(NavigationManager.ToAbsoluteUri("/publicRESTHub"))
+            .WithUrl(NavigationManager.ToAbsoluteUri("/publicAPI"))
             .Build();
 
         hubConnection.On<string, CurrentStatus>("ReceiveTickerStatus", (marketCode, status) =>

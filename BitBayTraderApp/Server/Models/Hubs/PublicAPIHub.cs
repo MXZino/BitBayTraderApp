@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BitBayTraderApp.Server.Models.Hubs
 {
-    public class PublicRESTHub : Hub
+    public class PublicAPIHub : Hub
     {
         public async Task SendTickerStatus(string marketCode, CurrentStatus status)
         {
@@ -16,6 +16,10 @@ namespace BitBayTraderApp.Server.Models.Hubs
         public async Task SendLast24HStats(string marketCode, MarketStats stats)
         {
             await Clients.All.SendAsync("ReceiveLast24HStats", marketCode, stats);
+        }
+        public async Task SendOrderBook(string marketCode, Orderbook stats)
+        {
+            await Clients.All.SendAsync("ReceiveOrderbook", marketCode, stats);
         }
     }
 }

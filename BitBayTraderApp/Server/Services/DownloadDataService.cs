@@ -1,5 +1,6 @@
 ﻿using BitBayTraderApp.Server.Interfaces;
 using BitBayTraderApp.Server.Models.Hubs;
+using BitBayTraderApp.Shared.Models.DTO.PublicRest;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -13,15 +14,13 @@ namespace BitBayTraderApp.Server.Services
     public class DownloadDataService
     {
         private readonly IConfiguration configuration;
-        private readonly IHubContext<PublicRESTHub> publicRESTHubContext;
-        private readonly IPublicRESTService publicRestService;
+        private readonly IPublicAPIService publicAPIService;
         private readonly List<string> marketCodes;
 
-        public DownloadDataService(IConfiguration configuration, IPublicRESTService publicRestService, IHubContext<PublicRESTHub> publicRESTHubContext)
+        public DownloadDataService(IConfiguration configuration, IPublicAPIService publicAPIService)
         {
             this.configuration = configuration;
-            this.publicRestService = publicRestService;
-            this.publicRESTHubContext = publicRESTHubContext;
+            this.publicAPIService = publicAPIService;
 
             marketCodes = new List<string> { "BTC-PLN", "ETH-PLN" };
         }
@@ -32,11 +31,10 @@ namespace BitBayTraderApp.Server.Services
             {
                 foreach (var market in marketCodes)
                 {
-                    var ticker = await publicRestService.GetTicker(market);
-                    await publicRESTHubContext.Clients.All.SendAsync("ReceiveTickerStatus", market, ticker);
+                    var ticker = await publicAPIService.GetItems<CurrentStatus>(market);
+                    var orderbook = await publicAPIService.GetItems<Orderbook>(market);
                 }
-
-                await Task.Delay(1000, stoppingToken);
+                await Task.Delay(100, stoppingToken);
             }
         }
     }
